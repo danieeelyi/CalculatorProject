@@ -3,14 +3,14 @@
 @inject CalculatorService calculatorService
 @inject IJSRuntime js
 
-<div class="calculator-container" @onkeydown="HandleKeyPress" tabindex="0">
+<div class="calculator-container" tabindex="0" @onkeydown="HandleKeyPress">
     <div class="calculator-display">
         @calculatorService.DisplayValue
     </div>
 
     <div class="row calculator-row">
         <div class="col-6">
-            <button class="calculator-button" @onclick="@(() => { calculatorService.Clear(); BlurButton(); })">C</button>
+            <button class="calculator-button" @onclick="@(() => calculatorService.Clear())">C</button>
         </div>
         <div class="col-3">
             <button class="calculator-button" @onclick="@(() => calculatorService.DeleteLastCharacter())">←</button>
@@ -81,41 +81,29 @@
 @code {
     private void HandleKeyPress(KeyboardEventArgs e)
     {
-        if (e.Key == "Enter")
+        switch (e.Key)
         {
-            calculatorService.CalculateResult();
-        }
-        else if (e.Key == "Backspace")
-        {
-            calculatorService.DeleteLastCharacter();
-        }
-        else if (e.Key == "Escape")
-        {
-            calculatorService.Clear();
-        }
-        else if (char.IsDigit(e.Key[0]))
-        {
-            calculatorService.InputDigit(e.Key);
-        }
-        else if (e.Key == ".")
-        {
-            calculatorService.InputDecimal();
-        }
-        else if (e.Key == "/")
-        {
-            calculatorService.SetOperation("/");
-        }
-        else if (e.Key == "*")
-        {
-            calculatorService.SetOperation("*");
-        }
-        else if (e.Key == "-")
-        {
-            calculatorService.SetOperation("-");
-        }
-        else if (e.Key == "+")
-        {
-            calculatorService.SetOperation("+");
+            case "Enter":
+                calculatorService.CalculateResult();
+                break;
+            case "Backspace":
+                calculatorService.DeleteLastCharacter();
+                break;
+            case "Escape":
+                calculatorService.Clear();
+                break;
+            case string key when char.IsDigit(key[0]):
+                calculatorService.InputDigit(e.Key);
+                break;
+            case ".":
+                calculatorService.InputDecimal();
+                break;
+            case "/":
+            case "*":
+            case "-":
+            case "+":
+                calculatorService.SetOperation(e.Key);
+                break;
         }
     }
 

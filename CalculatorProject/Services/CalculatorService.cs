@@ -25,11 +25,17 @@
         if (!DisplayValue.Contains("."))
         {
             DisplayValue += ".";
+            isNewEntry = false;
         }
     }
 
     public void SetOperation(string operation)
     {
+        if (!isNewEntry)
+        {
+            CalculateResult();
+        }
+
         _previousValue = _currentValue;
         _currentOperation = operation;
         isNewEntry = true;
@@ -56,12 +62,14 @@
                 else
                 {
                     DisplayValue = "Error";
+                    isNewEntry = true;
                     return;
                 }
                 break;
         }
 
         DisplayValue = _currentValue.ToString();
+        _previousValue = _currentValue; 
         isNewEntry = true;
     }
 
