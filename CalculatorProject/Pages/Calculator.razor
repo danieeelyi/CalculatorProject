@@ -1,0 +1,126 @@
+﻿@page "/calculator"
+
+@inject CalculatorService calculatorService
+@inject IJSRuntime js
+
+<div class="calculator-container" @onkeydown="HandleKeyPress" tabindex="0">
+    <div class="calculator-display">
+        @calculatorService.DisplayValue
+    </div>
+
+    <div class="row calculator-row">
+        <div class="col-6">
+            <button class="calculator-button" @onclick="@(() => { calculatorService.Clear(); BlurButton(); })">C</button>
+        </div>
+        <div class="col-3">
+            <button class="calculator-button" @onclick="@(() => calculatorService.DeleteLastCharacter())">←</button>
+        </div>
+        <div class="col-3">
+            <button class="calculator-button operation" @onclick="@(() => calculatorService.SetOperation("/"))">÷</button>
+        </div>
+    </div>
+
+    <div class="row calculator-row">
+        <div class="col-3">
+            <button class="calculator-button" @onclick="@(() => calculatorService.InputDigit("7"))">7</button>
+        </div>
+        <div class="col-3">
+            <button class="calculator-button" @onclick="@(() => calculatorService.InputDigit("8"))">8</button>
+        </div>
+        <div class="col-3">
+            <button class="calculator-button" @onclick="@(() => calculatorService.InputDigit("9"))">9</button>
+        </div>
+        <div class="col-3">
+            <button class="calculator-button operation" @onclick="@(() => calculatorService.SetOperation("*"))">×</button>
+        </div>
+    </div>
+
+    <div class="row calculator-row">
+        <div class="col-3">
+            <button class="calculator-button" @onclick="@(() => calculatorService.InputDigit("4"))">4</button>
+        </div>
+        <div class="col-3">
+            <button class="calculator-button" @onclick="@(() => calculatorService.InputDigit("5"))">5</button>
+        </div>
+        <div class="col-3">
+            <button class="calculator-button" @onclick="@(() => calculatorService.InputDigit("6"))">6</button>
+        </div>
+        <div class="col-3">
+            <button class="calculator-button operation" @onclick="@(() => calculatorService.SetOperation("-"))">−</button>
+        </div>
+    </div>
+
+    <div class="row calculator-row">
+        <div class="col-3">
+            <button class="calculator-button" @onclick="@(() => calculatorService.InputDigit("1"))">1</button>
+        </div>
+        <div class="col-3">
+            <button class="calculator-button" @onclick="@(() => calculatorService.InputDigit("2"))">2</button>
+        </div>
+        <div class="col-3">
+            <button class="calculator-button" @onclick="@(() => calculatorService.InputDigit("3"))">3</button>
+        </div>
+        <div class="col-3">
+            <button class="calculator-button operation" @onclick="@(() => calculatorService.SetOperation("+"))">+</button>
+        </div>
+    </div>
+
+    <div class="row calculator-row">
+        <div class="col-6">
+            <button class="calculator-button" @onclick="@(() => calculatorService.InputDigit("0"))">0</button>
+        </div>
+        <div class="col-3">
+            <button class="calculator-button" @onclick="@(() => calculatorService.InputDecimal())">.</button>
+        </div>
+        <div class="col-3">
+            <button class="calculator-button equal" @onclick="@(() => calculatorService.CalculateResult())">=</button>
+        </div>
+    </div>
+</div>
+
+@code {
+    private void HandleKeyPress(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            calculatorService.CalculateResult();
+        }
+        else if (e.Key == "Backspace")
+        {
+            calculatorService.DeleteLastCharacter();
+        }
+        else if (e.Key == "Escape")
+        {
+            calculatorService.Clear();
+        }
+        else if (char.IsDigit(e.Key[0]))
+        {
+            calculatorService.InputDigit(e.Key);
+        }
+        else if (e.Key == ".")
+        {
+            calculatorService.InputDecimal();
+        }
+        else if (e.Key == "/")
+        {
+            calculatorService.SetOperation("/");
+        }
+        else if (e.Key == "*")
+        {
+            calculatorService.SetOperation("*");
+        }
+        else if (e.Key == "-")
+        {
+            calculatorService.SetOperation("-");
+        }
+        else if (e.Key == "+")
+        {
+            calculatorService.SetOperation("+");
+        }
+    }
+
+    private async Task BlurButton()
+    {
+        await js.InvokeVoidAsync("document.activeElement.blur");
+    }
+}
